@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SVG Pro Studio | Kusursuz CMS V34</title>
+    <title>SVG Pro Studio | Kusursuz CMS V35 (UI Fixed)</title>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700;800&family=Nunito:wght@400;700&family=Open+Sans:wght@400;700&family=Oswald:wght@400;700&family=Pacifico&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;700&family=Raleway:wght@400;700&family=Roboto:wght@400;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root{--accent:#10b981;--bg:#0f172a;--panel:#1e293b;--border:#334155;--handle-move:#3b82f6;--handle-rotate:#f59e0b;--handle-radius:#ec4899}
@@ -14,36 +14,45 @@
         .login-card input{width:100%;padding:14px;margin-bottom:15px;border-radius:10px;border:1px solid var(--border);background:#000;color:#fff;text-align:center;outline:none;font-size:14px}
         .login-card button{width:100%;padding:14px;background:var(--accent);border:none;color:#fff;font-weight:700;border-radius:10px;cursor:pointer;transition:.2s;font-size:14px}
         .login-card button:hover{opacity:.9}
+        
         #app-container{display:none;height:100%;width:100%;flex-direction:row}
         #sidebar{width:480px;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100%;z-index:100;position:relative}
-        .sidebar-scroll-area{flex-shrink:0;max-height:45%;overflow-y:auto;background:#111827;padding:15px;border-bottom:2px solid var(--border)}
-        #layers-wrapper{background:#0f172a;border-bottom:2px solid var(--border);flex-shrink:0;display:flex;flex-direction:column}
-        #layers-wrapper[open]{height:35%}
-        #layers-wrapper:not([open]){height:auto}
-        #layers-header{padding:12px 15px;font-size:11px;font-weight:700;color:var(--accent);background:#111827;cursor:pointer;text-transform:uppercase;letter-spacing:1px;outline:none;user-select:none}
-        #layers-list{flex:1;overflow-y:auto}
+        
+        /* Menülerin Max yüksekliği artırıldı, katmanlar sığsın diye */
+        .sidebar-scroll-area{flex-shrink:0;max-height:55%;overflow-y:auto;background:#111827;padding:15px;border-bottom:2px solid var(--border)}
+        
+        /* Editör paneli artık kalan tüm devasa alanı kullanıyor */
         #editor-fields{flex:1;min-height:0;overflow-y:auto;padding:20px;background:rgba(0,0,0,.2);padding-bottom:80px}
-        .layer-item{display:flex;align-items:center;justify-content:space-between;padding:10px 15px;border-bottom:1px solid var(--border);cursor:pointer;font-size:12px;transition:.2s;background:#1e293b;color:#cbd5e1}
+        
+        /* Katman Listesi Tasarımı */
+        .layer-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);cursor:pointer;font-size:12px;transition:.2s;background:#1e293b;color:#cbd5e1}
         .layer-item:hover{background:#334155}
         .layer-item.active{border-left:4px solid var(--accent);background:rgba(16,185,129,.15);color:#fff;font-weight:700}
         .layer-actions{display:flex;gap:10px;align-items:center}
         .layer-btn{background:none;border:none;color:#94a3b8;cursor:pointer;font-size:14px;padding:0;transition:.2s}
         .layer-btn:hover{color:#fff;transform:scale(1.2)}
-        #main-view{flex:1;background:#020617;overflow:hidden;position:relative;height:calc(100% - 25px);display:flex}
+
+        /* ÇİZİM VE ZOOM ALANI - KESİLME HATASI DÜZELTİLDİ */
+        #main-view{flex:1;background:#020617;overflow:hidden;position:relative;height:calc(100% - 25px);display:flex; padding-left:20px; padding-top:20px; box-sizing:border-box;}
         #zoom-container{flex:1;display:flex;align-items:center;justify-content:center;transform-origin:center center;transition:transform .2s ease-out;position:relative}
         #svg-wrapper{position:relative;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 50px #000;touch-action:none;transition:transform .1s}
         #canvas-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
         #canvas-inner svg{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;overflow:visible}
+        
         .draw-mode{cursor:crosshair!important}
         .pan-mode{cursor:grab!important}
         .panning{cursor:grabbing!important}
+
+        /* CETVELLER */
         .ruler{position:absolute;background:#111827;border:1px solid var(--border);z-index:40;pointer-events:none;overflow:hidden}
         .ruler-h{top:0;left:20px;right:0;height:20px;border-left:none}
         .ruler-v{top:20px;left:0;bottom:0;width:20px;border-top:none}
         .ruler svg{position:absolute;top:0;left:0}
+
         .floating-tools{position:fixed;bottom:45px;left:40px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px;display:flex;gap:8px;box-shadow:0 10px 25px rgba(0,0,0,.5);z-index:500;align-items:center}
         .tool-btn{background:#0f172a;color:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:700;transition:.2s}
         .tool-btn:hover{background:var(--accent);border-color:var(--accent)}
+
         .duzenlenebilir{cursor:move;pointer-events:all}
         .locked{cursor:not-allowed!important}
         #control-layer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;overflow:visible}
@@ -54,27 +63,32 @@
         .handle-radius{stroke:var(--handle-radius);cursor:ns-resize;fill:var(--handle-radius)}
         .snap-line{stroke:#ec4899;stroke-width:1.5;stroke-dasharray:4,4;pointer-events:none;z-index:60}
         .guide-line{stroke:#06b6d4;stroke-width:3;stroke-dasharray:8,4;cursor:grab;pointer-events:all}
+
         input[type="range"]{width:100%;accent-color:var(--accent);height:6px;cursor:pointer;margin:0}
         input[type="text"],input[type="number"],textarea{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:#000;color:#fff;outline:none;font-size:13px}
         input[type="text"]:focus,input[type="number"]:focus,textarea:focus{border-color:var(--accent)}
         .font-select{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:#000;color:#fff;margin-bottom:5px;outline:none;font-size:13px;cursor:pointer}
+        
         .action-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
         .action-btn{flex:1;background:#334155;color:#fff;border:none;border-radius:8px;padding:10px 15px;font-size:12px;font-weight:700;cursor:pointer;text-align:center}
         .action-btn:hover{background:#475569}
         .action-btn.active{background:var(--accent);color:#fff}
         .action-btn.danger{background:#991b1b}
         .action-btn.special{background:#0284c7}
+
         .group-box{background:rgba(0,0,0,.2);padding:12px;border-radius:10px;border:1px solid #1e293b;margin-top:10px;margin-bottom:15px}
         .property-details{background:rgba(0,0,0,.25);padding:12px 18px;border-radius:12px;border:1px solid var(--border);margin-bottom:12px}
         .property-details summary{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;outline:none;margin-bottom:5px}
         .label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;width:100%}
         .label-text{font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
         .value-badge{background:#000;color:var(--accent);font-size:11px;padding:3px 6px;border-radius:4px;font-family:monospace;font-weight:700}
+        
         #context-menu{display:none;position:absolute;background:#1e293b;border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,.7);border-radius:8px;padding:5px;z-index:20000;min-width:180px}
         .ctx-item{padding:10px 15px;font-size:13px;cursor:pointer;color:#e2e8f0;border-radius:4px;display:flex;justify-content:space-between;align-items:center}
         .ctx-item:hover{background:var(--accent);color:#fff}
         .ctx-item.danger:hover{background:#ef4444}
         #status-bar{position:absolute;bottom:0;left:0;width:100%;height:25px;background:#0f172a;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 20px;font-size:11px;color:#94a3b8;z-index:400;font-family:monospace}
+        
         .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:30000;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
         .modal-content{background:#1e293b;border:1px solid var(--border);padding:30px;border-radius:16px;width:450px;box-shadow:0 25px 50px rgba(0,0,0,.5);position:relative;max-height:90vh;display:flex;flex-direction:column}
         .modal-content.library-modal{width:700px}
@@ -95,7 +109,7 @@
         .color-swatch{width:24px;height:24px;border-radius:4px;cursor:pointer;border:1px solid var(--border);transition:transform .1s}
         .color-swatch:hover{transform:scale(1.2);border-color:#fff}
         #status-info{position:fixed;top:0;width:100%;background:var(--accent);text-align:center;padding:10px;z-index:11000;display:none;font-weight:700;letter-spacing:1px}
-        @media (max-width:1023px){#app-container{flex-direction:column}#sidebar{width:100%;height:50%;border-top:1px solid var(--border);border-left:none;order:2}#main-view{width:100%;height:50%;order:1}.floating-tools{bottom:auto;top:10px;left:50%;transform:translateX(-50%)}.modal-content.library-modal{width:90vw}}
+        @media (max-width:1023px){#app-container{flex-direction:column}#sidebar{width:100%;height:50%;border-top:1px solid var(--border);border-left:none;order:2}#main-view{width:100%;height:50%;order:1;padding-left:0;padding-top:0;}.ruler-h{left:0}.ruler-v{top:0}.floating-tools{bottom:auto;top:10px;left:50%;transform:translateX(-50%)}.modal-content.library-modal{width:90vw}}
     </style>
 </head>
 <body>
@@ -168,7 +182,7 @@
 
 <div id="login-screen">
     <div class="login-card">
-        <h2 style="margin-top:0; color:white;">Pro Studio V34</h2>
+        <h2 style="margin-top:0; color:white;">Pro Studio V35</h2>
         <div style="font-size:12px; color:#94a3b8; margin-bottom:20px;">Lütfen Cloudflare Worker şifrenizi girin.</div>
         <input type="password" id="passInput" placeholder="Sunucu Şifresi">
         <button id="loginBtn">Sunucuya Bağlan</button>
@@ -199,7 +213,7 @@
         </div>
         <div id="status-bar">
             <div id="status-count">Nesne Sayısı: 0</div>
-            <div>SVG Pro Studio Ultimate V34</div>
+            <div>SVG Pro Studio Ultimate V35</div>
             <div id="status-time">Son Kayıt: Bekleniyor...</div>
         </div>
     </div>
@@ -220,7 +234,7 @@
             
             <details style="margin-bottom: 10px;">
                 <summary style="font-size:11px; font-weight:bold; color:#f59e0b; cursor:pointer; margin-bottom:5px;">🎬 SEÇİLİ SLAYT AYARLARI (JSON)</summary>
-                <div class="group-box" style="margin-top:5px;">
+                <div class="group-box" style="margin-top:5px; margin-bottom:5px;">
                     <div style="font-size:10px; color:#94a3b8; margin-bottom:10px; font-style:italic;">Değişiklikler doğrudan settings.json dosyasına işlenir.</div>
                     <div class="input-group" style="margin-bottom:10px;">
                         <span class="label-text">BU SLAYTIN EKRANDA KALMA SÜRESİ (ms)</span>
@@ -244,7 +258,7 @@
 
             <details style="margin-bottom: 10px;">
                 <summary style="font-size:11px; font-weight:bold; color:var(--accent); cursor:pointer; margin-bottom:5px;">📐 TUVAL AYARLARI</summary>
-                <div class="group-box" style="margin-top:5px;">
+                <div class="group-box" style="margin-top:5px; margin-bottom:5px;">
                     <div style="display:flex; gap:10px; align-items: center; margin-bottom:10px;">
                         <input type="number" id="canvas-w" placeholder="Genişlik" onchange="window.updateCanvasSize()">
                         <span style="color:#64748b;">X</span>
@@ -258,7 +272,7 @@
                 </div>
             </details>
             
-            <details style="margin-bottom: 5px;" open>
+            <details style="margin-bottom: 10px;" open>
                 <summary style="font-size:11px; font-weight:bold; color:#8b5cf6; cursor:pointer; margin-bottom:5px;">🎨 NESNE EKLE & ARAÇLAR</summary>
                 <div class="group-box" style="margin-top:5px; margin-bottom:5px;">
                     <div class="action-row" style="margin-bottom:5px;">
@@ -270,14 +284,16 @@
                     <button class="action-btn special" style="width:100%; padding:12px; margin-top:5px; font-size:13px;" onclick="window.openLibrary()">📚 DEV KÜTÜPHANEYİ AÇ</button>
                 </div>
             </details>
+            
+            <details style="margin-bottom: 5px;" open>
+                <summary style="font-size:11px; font-weight:bold; color:#06b6d4; cursor:pointer; margin-bottom:5px;">📑 KATMANLAR</summary>
+                <div class="group-box" style="margin-top:5px; margin-bottom:5px; padding: 0; overflow: hidden; border: 1px solid var(--border);">
+                    <div id="layers-list" style="max-height: 250px; overflow-y: auto;"></div>
+                </div>
+            </details>
 
             <input type="file" id="img-in" accept="image/*" hidden>
         </div>
-
-        <details id="layers-wrapper" open>
-            <summary id="layers-header">📑 KATMANLAR HİYERARŞİSİ</summary>
-            <div id="layers-list"></div>
-        </details>
 
         <div id="editor-fields">
             <div style="text-align:center; color:#64748b; margin-top:50px; font-style:italic; font-size:13px;">
@@ -297,6 +313,7 @@
     let settingsData = [];
     let settingsSha = "";
 
+    // GÜVENLİ VERİ FONKSİYONLARI
     window.setD = function(el, key, val) { el.setAttribute('data-' + key, val); };
     window.getD = function(el, key) { return el.getAttribute('data-' + key); };
 
@@ -374,7 +391,7 @@
         window.updateSettingsUI();
     });
 
-    window.addEventListener('DOMContentLoaded', () => { if (WORKER_URL !== "") { /* Otokontrol */ } });
+    window.addEventListener('DOMContentLoaded', () => { if (WORKER_URL !== "") { /* Otokontrol yeri */ } });
 
     window.loadSettings = async function() {
         try {
@@ -561,7 +578,7 @@
             }
             
             svg.appendChild(innerSvg); selectedEl = innerSvg; window.saveState(); window.setupLayers(); window.updateEditorUI(innerSvg); window.renderEditor();
-        } catch(e) { alert("SVG kodu eklenirken hata oluştu."); }
+        } catch(e) { alert("SVG kodu eklenirken hata oluştu. Lütfen geçerli bir SVG kodu girdiğinizden emin olun."); }
     };
 
     window.updateRulers = function() {
@@ -1077,7 +1094,7 @@
                 const tAlign = el.getAttribute('text-anchor') || 'middle';
                 let fontOptions = googleFonts.map(font => `<option value="${font.val}" style="font-family: ${font.val}" ${currentFont.includes(font.name) ? "selected" : ""}>${font.name}</option>`).join('');
                 
-                let fontHtml = `<select class="font-select" style="margin-bottom:15px;" onchange="const t=document.getElementById('${id}'); t.setAttribute('font-family', this.value); t.style.fontFamily=this.value; window.applyTextCurve(t); if(window.updateEditorUI) window.updateEditorUI(t); window.saveState();">${fontOptions}</select>
+                let fontHtml = `<select id="select-font-${id}" class="font-select" style="margin-bottom:15px;" onchange="const t=document.getElementById('${id}'); t.setAttribute('font-family', this.value); t.style.fontFamily=this.value; window.applyTextCurve(t); if(window.updateEditorUI) window.updateEditorUI(t); window.saveState();">${fontOptions}</select>
                     <div style="display:flex; gap:5px; margin-bottom:15px;">
                         <button class="action-btn ${isB?'active':''}" style="flex:1; font-size:14px;" onclick="window.applyTextStyle('${id}', 'bold')"><b>B</b></button>
                         <button class="action-btn ${isI?'active':''}" style="flex:1; font-size:14px; font-style:italic;" onclick="window.applyTextStyle('${id}', 'italic')">I</button>
@@ -1118,7 +1135,7 @@
                 const fillType = window.getD(el, 'fill-type') || 'solid'; const col1 = window.getD(el, 'color1') || '#10b981'; const col2 = window.getD(el, 'color2') || '#3b82f6'; const solidCol = window.getD(el, 'solid-color') || (el.getAttribute('fill') === 'none' ? el.getAttribute('stroke') : el.getAttribute('fill')) || "#ffffff";
                 let swatchHtml = `<div class="label-text" style="margin-top:15px; margin-bottom:8px;">PROJE RENKLERİ</div><div class="swatch-container">` + recentColors.map(c => `<div class="color-swatch" style="background:${c}" onclick="window.applyRecentColor('${id}', '${c}')" title="${c}"></div>`).join('') + `</div>`;
                 let fillHtml = `<div class="label-text" style="margin-bottom:5px;">DOLGU TİPİ</div><select id="fill-sel-${id}" class="font-select" style="margin-bottom:15px;" onchange="const t=document.getElementById('${id}'); window.setD(t, 'fill-type', this.value); window.applyFill(t); window.renderProperties(); window.saveState();"><option value="solid" ${fillType === 'solid' ? 'selected' : ''}>Düz Renk</option><option value="gradient" ${fillType === 'gradient' ? 'selected' : ''}>Renk Geçişi (Gradient)</option></select>`;
-                if (fillType === 'solid') { fillHtml += `<div class="label-text" style="margin-bottom:5px;">${isPath?'ÇİZGİ':'İÇ'} RENK</div><div style="display:flex; gap:10px; align-items:center;"><input type="color" id="fill-col-${id}" value="${safeColor(solidCol)}" oninput="const t=document.getElementById('${id}'); window.setD(t, 'solid-color', this.value); window.applyFill(t); this.nextElementSibling.nextElementSibling.value=this.value;" onchange="window.addRecentColor(this.value)" style="width:45px; height:45px; cursor:pointer; border:none; background:none; border-radius:8px;"><button class="action-btn" style="flex:0 0 45px; padding:12px; background:#334155; font-size:16px;" onclick="window.pickColor('${id}', 'solid-color', 'fill')" title="Göz Damlası">💧</button><input type="text" id="fill-txt-${id}" value="${safeColor(solidCol)}" style="flex:1;" onchange="const t=document.getElementById('${id}'); window.setD(t, 'solid-color', this.value); window.applyFill(t); document.getElementById('fill-col-${id}').value=this.value; window.addRecentColor(this.value); window.saveState();"></div>`; } 
+                if (fillType === 'solid') { fillHtml += `<div class="label-text" style="margin-bottom:5px;">${isPath?'ÇİZGİ':'İÇ'} RENK</div><div style="display:flex; gap:10px; align-items:center;"><input type="color" id="fill-col-${id}" value="${safeColor(solidCol)}" oninput="const t=document.getElementById('${id}'); window.setD(t, 'solid-color', this.value); window.applyFill(t); this.nextElementSibling.nextElementSibling.value=this.value;" onchange="window.addRecentColor(this.value); window.saveState();" style="width:45px; height:45px; cursor:pointer; border:none; background:none; border-radius:8px;"><button class="action-btn" style="flex:0 0 45px; padding:12px; background:#334155; font-size:16px;" onclick="window.pickColor('${id}', 'solid-color', 'fill')" title="Göz Damlası">💧</button><input type="text" id="fill-txt-${id}" value="${safeColor(solidCol)}" style="flex:1;" onchange="const t=document.getElementById('${id}'); window.setD(t, 'solid-color', this.value); window.applyFill(t); document.getElementById('fill-col-${id}').value=this.value; window.addRecentColor(this.value); window.saveState();"></div>`; } 
                 else { fillHtml += `<div class="property-grid"><div class="input-group"><span class="label-text">RENK 1</span><div style="display:flex; gap:5px; align-items:center;"><input type="color" value="${safeColor(col1)}" oninput="const t=document.getElementById('${id}'); window.setD(t, 'color1', this.value); window.applyFill(t);" onchange="window.addRecentColor(this.value); window.saveState();" style="width:35px; height:35px; cursor:pointer; border:none; background:none;"><button class="action-btn" style="padding:8px; background:#334155;" onclick="window.pickColor('${id}', 'color1', '')">💧</button></div></div><div class="input-group"><span class="label-text">RENK 2</span><div style="display:flex; gap:5px; align-items:center;"><input type="color" value="${safeColor(col2)}" oninput="const t=document.getElementById('${id}'); window.setD(t, 'color2', this.value); window.applyFill(t);" onchange="window.addRecentColor(this.value); window.saveState();" style="width:35px; height:35px; cursor:pointer; border:none; background:none;"><button class="action-btn" style="padding:8px; background:#334155;" onclick="window.pickColor('${id}', 'color2', '')">💧</button></div></div></div>`; }
                 fillHtml += swatchHtml;
                 sections.push(window.createPropertySection("Dolgu & Renk", fillHtml));
@@ -1184,9 +1201,10 @@
             sections.push(window.createPropertySection("</> Canlı SVG Kodu", codeHtml));
 
             f.innerHTML = sections.join('');
+        
         } catch(err) {
             console.error("Özellik Paneli Hatası:", err);
-            f.innerHTML = `<div style="color:#ef4444; padding:20px; font-size:12px; text-align:center;">Özellikler yüklenemedi. Sistem hata korumasına geçti.</div>`;
+            f.innerHTML = `<div style="color:#ef4444; padding:20px; font-size:12px; text-align:center;">Özellikler yüklenemedi. Lütfen nesneyi tekrar seçin.</div>`;
         }
     };
 
@@ -1195,6 +1213,7 @@
             let p = new DOMParser(); 
             let code = document.getElementById('raw-svg-code').value.trim();
             let n;
+            
             if (!code.toLowerCase().startsWith('<svg')) {
                 let d = p.parseFromString('<svg xmlns="http://www.w3.org/2000/svg">' + code + '</svg>', 'image/svg+xml');
                 if(d.documentElement.tagName === 'parsererror') throw new Error('Hatalı Kod');
@@ -1204,6 +1223,7 @@
                 n = d.documentElement; 
                 if(n.tagName==='parsererror') throw new Error('Hatalı Kod');
             }
+            
             if(!n) throw new Error('Geçersiz SVG');
             
             let o = document.getElementById(id); 
@@ -1215,66 +1235,6 @@
         } catch(err) {
             alert('Hata: Lütfen geçerli bir SVG kodu girin.');
         }
-    };
-
-    // === EKLENEN BUTON FONKSİYONLARI ===
-    window.addNewText = function() {
-        const svg = document.querySelector('#canvas-inner svg'); if(!svg) return; 
-        const center = window.getCanvasCenter();
-        const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        t.id = "txt_" + Date.now(); t.setAttribute("class", "duzenlenebilir"); 
-        t.setAttribute("x", center.cx); t.setAttribute("y", center.cy); 
-        t.setAttribute("text-anchor", "middle"); t.setAttribute("dominant-baseline", "central"); 
-        window.setD(t, 'base-font-size', "80"); window.setD(t, 'max-width', "600"); window.setD(t, 'raw-text', "YENİ METİN"); 
-        window.setD(t, 'solid-color', "#000000"); t.setAttribute("fill", "#000000"); 
-        t.setAttribute("font-size", "80"); t.setAttribute("font-family", "sans-serif"); t.textContent = "YENİ METİN";
-        svg.appendChild(t); selectedEl = t; window.saveState(); window.setupLayers(); window.updateEditorUI(t); window.renderEditor();
-    };
-    
-    window.addShape = function(type) {
-        const svg = document.querySelector('#canvas-inner svg'); if(!svg) return; 
-        const center = window.getCanvasCenter();
-        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        rect.id = "shp_" + Date.now(); rect.setAttribute("class", "duzenlenebilir"); 
-        rect.setAttribute("x", center.cx - 100); rect.setAttribute("y", center.cy - 100); 
-        rect.setAttribute("width", 200); rect.setAttribute("height", 200); 
-        window.setD(rect, 'solid-color', "#10b981"); rect.setAttribute("fill", "#10b981"); window.setD(rect, 'mask-shape', "none");
-        svg.appendChild(rect); selectedEl = rect; window.saveState(); window.setupLayers(); window.updateEditorUI(rect); window.renderEditor();
-    };
-
-    window.saveData = async function() {
-        if (!WORKER_URL || WORKER_URL === "") { alert("Lütfen kodun içindeki WORKER_URL kısmına kendi linkinizi yazın!"); return; }
-        const st = document.getElementById('status-info'); st.innerText = "KAYDEDİLİYOR..."; st.style.display = "block";
-        
-        try {
-            document.getElementById('control-layer').innerHTML = ""; window.hideGuides(true);
-            const svgText = new XMLSerializer().serializeToString(document.querySelector('#canvas-inner svg')); 
-            const b64 = btoa(unescape(encodeURIComponent(svgText)));
-            window.hideGuides(false);
-            
-            const fileName = document.getElementById('file-selector').value;
-            const res = await fetch(WORKER_URL, { 
-                method: "PUT", 
-                headers: { "X-Auth-Key": SESSION_PASS, "X-File-Name": fileName }, 
-                body: JSON.stringify({message: "Pro Studio Ultimate Fix V34", content: b64, sha: SHA_KEY}) 
-            });
-            
-            if(res.ok) { 
-                try {
-                    const data = await res.json();
-                    if(data.content && data.content.sha) SHA_KEY = data.content.sha;
-                    else if(data.sha) SHA_KEY = data.sha;
-                } catch(err) {
-                    const freshRes = await fetch(WORKER_URL, { headers: {"X-Auth-Key": SESSION_PASS, "X-File-Name": fileName} });
-                    if(freshRes.ok) { const freshData = await freshRes.json(); SHA_KEY = freshData.sha || ""; }
-                }
-                st.innerText = "BAŞARIYLA KAYDEDİLDİ!"; 
-                const now = new Date(); document.getElementById('status-time').innerText = `Son Kayıt: ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`; 
-            } 
-            else { st.innerText = "KAYIT HATASI!"; }
-            setTimeout(() => st.style.display="none", 2000);
-            if(selectedEl) window.updateEditorUI(selectedEl);
-        } catch(e) { alert("Kayıt Hatası: Sunucu bağlantısı kurulamadı."); st.style.display="none"; }
     };
 </script>
 </body>
