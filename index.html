@@ -3,25 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SVG Pro Studio | Kusursuz CMS V40 (Tam Sürüm)</title>
+    <title>SVG Pro Studio | Kusursuz CMS V41 (Sıfır Hata)</title>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700;800&family=Nunito:wght@400;700&family=Open+Sans:wght@400;700&family=Oswald:wght@400;700&family=Pacifico&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;700&family=Raleway:wght@400;700&family=Roboto:wght@400;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root{--accent:#10b981;--bg:#0f172a;--panel:#1e293b;--border:#334155;--handle-move:#3b82f6;--handle-rotate:#f59e0b;--handle-radius:#ec4899}
         *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
         html,body{margin:0;padding:0;width:100%;height:100vh;height:100dvh;overflow:hidden;background:var(--bg);color:#fff;font-family:'Inter',sans-serif;overscroll-behavior-y:none}
+        
         #login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:10000}
         .login-card{background:var(--panel);padding:40px;border-radius:20px;width:340px;text-align:center;border:1px solid var(--border);box-shadow:0 20px 50px rgba(0,0,0,.5)}
         .login-card input{width:100%;padding:14px;margin-bottom:15px;border-radius:10px;border:1px solid var(--border);background:#000;color:#fff;text-align:center;outline:none;font-size:14px}
         .login-card button{width:100%;padding:14px;background:var(--accent);border:none;color:#fff;font-weight:700;border-radius:10px;cursor:pointer;transition:.2s;font-size:14px}
         .login-card button:hover{opacity:.9}
+        
         #app-container{display:none;height:100%;width:100%;flex-direction:row}
         #sidebar{width:480px;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100%;z-index:100;position:relative}
         
-        /* Sol Menü: Tüm Detayların ve Katmanların Toplandığı Üst Kaydırılabilir Alan */
         .sidebar-scroll-area{flex-shrink:0;max-height:60%;overflow-y:auto;background:#111827;padding:15px;border-bottom:2px solid var(--border)}
-        
-        /* Özellikler/Edit Paneli İçin Kalan Tüm Alan */
         #editor-fields{flex:1;min-height:0;overflow-y:auto;padding:20px;background:rgba(0,0,0,.2);padding-bottom:80px}
+        
+        #layers-wrapper{background:#0f172a;border-bottom:2px solid var(--border);flex-shrink:0;display:flex;flex-direction:column}
+        #layers-wrapper[open]{height:35%}
+        #layers-wrapper:not([open]){height:auto}
+        #layers-header{padding:12px 15px;font-size:11px;font-weight:700;color:var(--accent);background:#111827;cursor:pointer;text-transform:uppercase;letter-spacing:1px;outline:none;user-select:none}
+        #layers-list{flex:1;overflow-y:auto}
         
         .layer-item{display:flex;align-items:center;justify-content:space-between;padding:10px 15px;border-bottom:1px solid var(--border);cursor:pointer;font-size:12px;transition:.2s;background:#1e293b;color:#cbd5e1}
         .layer-item:hover{background:#334155}
@@ -29,24 +34,26 @@
         .layer-actions{display:flex;gap:10px;align-items:center}
         .layer-btn{background:none;border:none;color:#94a3b8;cursor:pointer;font-size:14px;padding:0;transition:.2s}
         .layer-btn:hover{color:#fff;transform:scale(1.2)}
+        
         #main-view{flex:1;background:#020617;overflow:hidden;position:relative;height:calc(100% - 25px);display:flex}
-        
-        /* Sol Taraftan Kesilme Hatası Çözümü */
         #zoom-container{flex:1;display:flex;align-items:center;justify-content:center;transform-origin:center center;transition:transform .2s ease-out;position:relative; margin-left: 20px; margin-top: 20px; width: calc(100% - 20px); height: calc(100% - 20px);}
-        
         #svg-wrapper{position:relative;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 50px #000;touch-action:none;transition:transform .1s}
         #canvas-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
         #canvas-inner svg{width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;overflow:visible}
+        
         .draw-mode{cursor:crosshair!important}
         .pan-mode{cursor:grab!important}
         .panning{cursor:grabbing!important}
+        
         .ruler{position:absolute;background:#111827;border:1px solid var(--border);z-index:40;pointer-events:none;overflow:hidden}
         .ruler-h{top:0;left:20px;right:0;height:20px;border-left:none}
         .ruler-v{top:20px;left:0;bottom:0;width:20px;border-top:none}
         .ruler svg{position:absolute;top:0;left:0}
+        
         .floating-tools{position:fixed;bottom:45px;left:40px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px;display:flex;gap:8px;box-shadow:0 10px 25px rgba(0,0,0,.5);z-index:500;align-items:center}
         .tool-btn{background:#0f172a;color:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:700;transition:.2s}
         .tool-btn:hover{background:var(--accent);border-color:var(--accent)}
+        
         .duzenlenebilir{cursor:move;pointer-events:all}
         .locked{cursor:not-allowed!important}
         #control-layer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50;overflow:visible}
@@ -57,36 +64,46 @@
         .handle-radius{stroke:var(--handle-radius);cursor:ns-resize;fill:var(--handle-radius)}
         .snap-line{stroke:#ec4899;stroke-width:1.5;stroke-dasharray:4,4;pointer-events:none;z-index:60}
         .guide-line{stroke:#06b6d4;stroke-width:3;stroke-dasharray:8,4;cursor:grab;pointer-events:all}
+        
         input[type="range"]{width:100%;accent-color:var(--accent);height:6px;cursor:pointer;margin:0}
         input[type="text"],input[type="number"],textarea{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:#000;color:#fff;outline:none;font-size:13px}
         input[type="text"]:focus,input[type="number"]:focus,textarea:focus{border-color:var(--accent)}
         .font-select{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:#000;color:#fff;margin-bottom:5px;outline:none;font-size:13px;cursor:pointer}
+        
         .action-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
         .action-btn{flex:1;background:#334155;color:#fff;border:none;border-radius:8px;padding:10px 15px;font-size:12px;font-weight:700;cursor:pointer;text-align:center}
         .action-btn:hover{background:#475569}
         .action-btn.active{background:var(--accent);color:#fff}
         .action-btn.danger{background:#991b1b}
         .action-btn.special{background:#0284c7}
+        
         .group-box{background:rgba(0,0,0,.2);padding:12px;border-radius:10px;border:1px solid #1e293b;margin-top:10px;margin-bottom:15px}
         .property-details{background:rgba(0,0,0,.25);padding:12px 18px;border-radius:12px;border:1px solid var(--border);margin-bottom:12px}
         .property-details summary{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;outline:none;margin-bottom:5px}
+        
         .label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;width:100%}
         .label-text{font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
         .value-badge{background:#000;color:var(--accent);font-size:11px;padding:3px 6px;border-radius:4px;font-family:monospace;font-weight:700}
+        
         #context-menu{display:none;position:absolute;background:#1e293b;border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,.7);border-radius:8px;padding:5px;z-index:20000;min-width:180px}
         .ctx-item{padding:10px 15px;font-size:13px;cursor:pointer;color:#e2e8f0;border-radius:4px;display:flex;justify-content:space-between;align-items:center}
         .ctx-item:hover{background:var(--accent);color:#fff}
         .ctx-item.danger:hover{background:#ef4444}
+        
         #status-bar{position:absolute;bottom:0;left:0;width:100%;height:25px;background:#0f172a;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:0 20px;font-size:11px;color:#94a3b8;z-index:400;font-family:monospace}
+        
         .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:30000;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
         .modal-content{background:#1e293b;border:1px solid var(--border);padding:30px;border-radius:16px;width:450px;box-shadow:0 25px 50px rgba(0,0,0,.5);position:relative;max-height:90vh;display:flex;flex-direction:column}
+        
         .close-modal{position:absolute;top:15px;right:15px;cursor:pointer;color:#94a3b8;font-size:24px;font-weight:700;line-height:1}
         .close-modal:hover{color:#fff}
         .shortcut-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
         .kbd{background:#0f172a;padding:3px 8px;border-radius:4px;border:1px solid var(--border);color:var(--accent);font-family:monospace}
+        
         .swatch-container{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
         .color-swatch{width:24px;height:24px;border-radius:4px;cursor:pointer;border:1px solid var(--border);transition:transform .1s}
         .color-swatch:hover{transform:scale(1.2);border-color:#fff}
+        
         #status-info{position:fixed;top:0;width:100%;background:var(--accent);text-align:center;padding:10px;z-index:11000;display:none;font-weight:700;letter-spacing:1px}
         @media (max-width:1023px){#app-container{flex-direction:column}#sidebar{width:100%;height:50%;border-top:1px solid var(--border);border-left:none;order:2}#main-view{width:100%;height:50%;order:1;padding-left:0;padding-top:0;}#zoom-container{margin:0;width:100%;height:100%;}.floating-tools{bottom:auto;top:10px;left:50%;transform:translateX(-50%)}}
     </style>
@@ -268,15 +285,12 @@
     </div>
 </div>
 <script>
-    // =========================================================================
-    // DİKKAT: BURAYA SADECE KENDİ CLOUDFLARE WORKER LİNKİNİZİ YAZIN. 
-    // =========================================================================
     const WORKER_URL = "https://githubtoken.tafbilgiislem.workers.dev"; 
     
     let SHA_KEY = "", SESSION_PASS = "", settingsData = [], settingsSha = "";
 
-    window.setD = function(el, key, val) { el.setAttribute('data-' + key, val); };
-    window.getD = function(el, key) { return el.getAttribute('data-' + key); };
+    window.setD = function(el, key, val) { if(el) el.setAttribute('data-' + key, val); };
+    window.getD = function(el, key) { return el ? el.getAttribute('data-' + key) : null; };
 
     let recentColors = ['#10b981', '#3b82f6', '#ef4444', '#f59e0b', '#8b5cf6', '#ffffff'];
     window.addRecentColor = function(c) { 
@@ -292,9 +306,10 @@
     let selectedEl = null, resizingEl = null, rotatingEl = null, radiusingEl = null, activeHandle = null, offset = {x:0, y:0}, startP = {x:0, y:0}, startData = {}, isModified = false;
     let clipboard = null, currentZoom = 1, panX = 0, panY = 0, historyStack = [], historyIndex = -1;
     let isDrawingMode = false, isDrawing = false, currentPath = null, pathData = "", isDraggingGuide = false, currentGuide = null, isDraggingElement = false, isSpacePressed = false, isPanning = false, panStart = {x:0, y:0}, panOffsetStart = {x:0, y:0};
+
     window.updateEditorUI = null;
 
-    const googleFonts = [{ name: "Varsayılan", val: "sans-serif" }, { name: "Roboto", val: "'Roboto', sans-serif" }, { name: "Montserrat", val: "'Montserrat', sans-serif" }, { name: "Poppins", val: "'Poppins', sans-serif" }, { name: "Open Sans", val: "'Open Sans', sans-serif" }, { name: "Lato", val: "'Lato', sans-serif" }, { name: "Playfair Display", val: "'Playfair Display', serif" }, { name: "Pacifico", val: "'Pacifico', cursive" }];
+    const googleFonts = [{ name: "Varsayılan", val: "sans-serif" }, { name: "Roboto", val: "'Roboto', sans-serif" }, { name: "Montserrat", val: "'Montserrat', sans-serif" }, { name: "Poppins", val: "'Poppins', sans-serif" }, { name: "Open Sans", val: "'Open Sans', sans-serif" }, { name: "Lato", val: "'Lato', sans-serif" }];
 
     window.getCanvasCenter = function() {
         const svg = document.querySelector('#canvas-inner svg');
@@ -378,21 +393,24 @@
         } catch(e) { alert("Bağlantı Hatası!"); st.style.display="none"; document.getElementById('login-screen').style.display = "flex"; document.getElementById('app-container').style.display = "none"; }
     };
 
-    // ====== KAYDET, YAZI EKLE, KARE EKLE (Eksik Olan Hayati Butonlar Geri Döndü) ======
+    // ====== KAYDET, YAZI EKLE, KARE EKLE BUTONLARI (Kusursuz ve Eksiksiz) ======
     window.saveData = async function() {
         if (!WORKER_URL || WORKER_URL === "") { alert("Lütfen kodun içindeki WORKER_URL kısmına kendi linkinizi yazın!"); return; }
         const st = document.getElementById('status-info'); st.innerText = "KAYDEDİLİYOR..."; st.style.display = "block";
+        
         try {
             document.getElementById('control-layer').innerHTML = ""; window.hideGuides(true);
             const svgText = new XMLSerializer().serializeToString(document.querySelector('#canvas-inner svg')); 
             const b64 = btoa(unescape(encodeURIComponent(svgText)));
             window.hideGuides(false);
+            
             const fileName = document.getElementById('file-selector').value;
             const res = await fetch(WORKER_URL, { 
                 method: "PUT", 
                 headers: { "X-Auth-Key": SESSION_PASS, "X-File-Name": fileName }, 
                 body: JSON.stringify({message: "Pro Studio Ultimate Fix V40", content: b64, sha: SHA_KEY}) 
             });
+            
             if(res.ok) { 
                 try {
                     const data = await res.json();
@@ -430,8 +448,8 @@
         svg.appendChild(rect); selectedEl = rect; window.saveState(); window.setupLayers(); window.updateEditorUI(rect); window.renderEditor();
     };
 
-    // ======= YENİ, HATASIZ VE KESİNTİSİZ KAYDIRICI (SLIDER) FONKSİYONLARI =======
-    window.changeProp = function(id, prop, val) {
+    // ======= GÜVENLİ VE HIZLI KAYDIRICI (SLIDER) MOTORU =======
+    window.changeProp = function(id, prop, val, elUI) {
         const el = document.getElementById(id); if(!el) return;
         if(prop === 'x') el.setAttribute('x', val);
         if(prop === 'y') el.setAttribute('y', val);
@@ -452,25 +470,51 @@
             if(el.tagName === 'text') { window.setD(el, 'base-font-size', val); el.setAttribute('font-size', val); } 
             else { el.setAttribute('height', val); }
         }
+        
+        if (elUI) {
+            const badge = document.getElementById('val-' + prop + '-' + id);
+            if (badge) badge.innerText = val + 'px';
+            if (elUI.type === 'range' && elUI.nextElementSibling && elUI.nextElementSibling.type === 'number') elUI.nextElementSibling.value = val;
+            else if (elUI.type === 'number' && elUI.previousElementSibling && elUI.previousElementSibling.type === 'range') elUI.previousElementSibling.value = val;
+        }
+        
         if(el.tagName === 'text') window.applyTextCurve(el);
         if(el.tagName === 'image' || el.tagName === 'rect') window.applyShapeMask(el);
         if(window.updateEditorUI) window.updateEditorUI(el);
     };
 
-    window.changeSetting = function(id, key, val) {
+    window.changeSetting = function(id, key, val, elUI) {
         const el = document.getElementById(id); if(!el) return;
         window.setD(el, key, val);
-        if(key === 'curve' || key === 'raw-text' || key === 'letter-spacing') { if(key === 'letter-spacing') el.setAttribute('letter-spacing', val); window.applyTextCurve(el); }
+        
+        if(key === 'curve' || key === 'raw-text' || key === 'letter-spacing' || key === 'max-width') { 
+            if(key === 'letter-spacing') el.setAttribute('letter-spacing', val); 
+            window.applyTextCurve(el); 
+        }
         if(key === 'rx' || key === 'mask-shape') window.applyShapeMask(el);
         if(key === 'angle') window.applyTransforms(el);
+        
+        if (elUI) {
+            const badge = document.getElementById('val-' + key + '-' + id);
+            if (badge) badge.innerText = val + (key === 'angle' ? '°' : (key === 'curve' ? '' : 'px'));
+            if (elUI.type === 'range' && elUI.nextElementSibling && elUI.nextElementSibling.type === 'number') elUI.nextElementSibling.value = val;
+            else if (elUI.type === 'number' && elUI.previousElementSibling && elUI.previousElementSibling.type === 'range') elUI.previousElementSibling.value = val;
+        }
         if(window.updateEditorUI) window.updateEditorUI(el);
     };
     
-    window.changeFilter = function(id, filterType, val) {
+    window.changeFilter = function(id, filterType, val, elUI) {
         const el = document.getElementById(id); if(!el) return;
         if(filterType === 'opacity') el.setAttribute('opacity', val);
         else window.setD(el, filterType, val);
         window.applyFilters(el);
+        
+        if (elUI) {
+            const badge = document.getElementById('val-' + (filterType==='opacity'?'op':(filterType==='shadow-x'?'sx':(filterType==='shadow-y'?'sy':(filterType==='shadow-blur'?'sb':'bl')))) + '-' + id);
+            if (badge) badge.innerText = (filterType==='opacity' ? Math.round(val*100)+'%' : val+'px');
+            if (elUI.type === 'range' && elUI.nextElementSibling && elUI.nextElementSibling.type === 'number') elUI.nextElementSibling.value = val;
+            else if (elUI.type === 'number' && elUI.previousElementSibling && elUI.previousElementSibling.type === 'range') elUI.previousElementSibling.value = val;
+        }
     };
 
     window.handleImageFile = function(file) {
@@ -598,7 +642,7 @@
         else if(style === 'bold') { window.setD(el, 'bold', window.getD(el, 'bold') === 'true' ? 'false' : 'true'); el.setAttribute('font-weight', window.getD(el, 'bold') === 'true' ? 'bold' : 'normal'); }
         else if(style === 'italic') { window.setD(el, 'italic', window.getD(el, 'italic') === 'true' ? 'false' : 'true'); el.setAttribute('font-style', window.getD(el, 'italic') === 'true' ? 'italic' : 'normal'); }
         else if(style === 'underline') { window.setD(el, 'underline', window.getD(el, 'underline') === 'true' ? 'false' : 'true'); el.setAttribute('text-decoration', window.getD(el, 'underline') === 'true' ? 'underline' : 'none'); }
-        else if(style === 'align') { el.setAttribute('text-anchor', val); } 
+        else if(style === 'align') { el.setAttribute('text-anchor', val); window.autoFitText(el); } 
         window.saveState(); window.renderEditor(); if(window.updateEditorUI) window.updateEditorUI(el);
     };
     
@@ -687,13 +731,28 @@
             grad.querySelector(".stop1").setAttribute("stop-color", c1); grad.querySelector(".stop2").setAttribute("stop-color", c2);
             fillVal = `url(#${gradId})`;
         } else { fillVal = window.getD(el, 'solid-color') || '#000000'; }
+        
         el.setAttribute("fill", fillVal); if(el.tagName !== 'path') el.style.fill = fillVal;
         if(el.tagName === 'g' || el.tagName === 'svg') { el.querySelectorAll('path, circle, rect, polygon').forEach(child => { child.style.fill = fillVal; child.setAttribute('fill', fillVal); }); }
     };
 
+    window.autoFitText = function(el) { 
+        if (el.tagName !== 'text') return; 
+        const mw = parseFloat(window.getD(el, 'max-width')) || 0; 
+        const baseFs = parseFloat(window.getD(el, 'base-font-size')) || 60; 
+        el.style.fontSize = baseFs + "px"; el.setAttribute("font-size", baseFs); 
+        
+        if (mw > 0) { 
+            let bbox = {width:0}; try { bbox = el.getBBox(); } catch(e){} 
+            if (bbox.width > mw && bbox.width > 0) { const scale = mw / bbox.width; const newFs = baseFs * scale; el.style.fontSize = newFs + "px"; el.setAttribute("font-size", newFs); } 
+        }
+    };
+    
     window.applyTextCurve = function(el) {
         if (el.tagName !== 'text') return; const curve = parseFloat(window.getD(el, 'curve')) || 0; if(!window.getD(el, 'raw-text')) window.setD(el, 'raw-text', el.textContent); const rawText = window.getD(el, 'raw-text');
+        
         el.innerHTML = ''; el.textContent = rawText; 
+        
         if (curve === 0) { 
             const style = window.getD(el, 'text-style') || 'normal';
             if(style !== 'normal') window.applyTextStyle(el.id, style, el.getAttribute('text-anchor'));
@@ -702,17 +761,20 @@
             const pathId = "curve_" + el.id; let curvePath = defs.querySelector("#" + pathId); if (!curvePath) { curvePath = document.createElementNS("http://www.w3.org/2000/svg", "path"); curvePath.id = pathId; curvePath.setAttribute("fill", "none"); defs.appendChild(curvePath); }
             const x = parseFloat(el.getAttribute('x')) || 0; const y = parseFloat(el.getAttribute('y')) || 0; const curveStrength = curve * 2.5; 
             curvePath.setAttribute("d", `M ${x - 1500}, ${y - curveStrength/2} Q ${x}, ${y + curveStrength} ${x + 1500}, ${y - curveStrength/2}`); 
+            
             el.innerHTML = '';
             const tp = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
             tp.setAttribute("href", "#" + pathId); tp.setAttribute("startOffset", "50%"); tp.setAttribute("text-anchor", "middle"); tp.textContent = rawText;
+            
             const style = window.getD(el, 'text-style') || 'normal';
             if(style === 'neon') { tp.setAttribute("font-weight", "bold"); tp.setAttribute("fill", "#ffffff"); tp.setAttribute("stroke", window.getD(el, 'solid-color')||"#000"); tp.setAttribute("stroke-width", "2"); tp.setAttribute("filter", `drop-shadow(0 0 15px ${window.getD(el, 'solid-color')||'#000'})`); } 
             else if(style === '3d') { tp.setAttribute("font-weight", "bold"); tp.setAttribute("fill", window.getD(el, 'solid-color')||"#000"); tp.setAttribute("stroke", "#000000"); tp.setAttribute("stroke-width", "3"); tp.setAttribute("filter", `drop-shadow(6px 6px 0 #000000)`); } 
             else if (style === 'hollow') { tp.setAttribute("fill", "none"); tp.setAttribute("stroke", window.getD(el, 'solid-color')||"#000"); tp.setAttribute("stroke-width", "4"); }
+            
             const w = el.getAttribute('textLength');
             if (w) { tp.setAttribute('textLength', w); tp.setAttribute('lengthAdjust', 'spacingAndGlyphs'); }
             el.appendChild(tp);
-        } 
+        } window.autoFitText(el);
     };
 
     window.describeRoundedRect = function(r, s, x, y, w, h) { if (r <= 0) return `M ${x} ${y} H ${x + w} V ${y + h} H ${x} Z`; r = Math.min(r, w / 2, h / 2); const kappa = (4 * (r * (1 - s)) * Math.tan(Math.PI / 4)) / 3; const pts = [ [x + r, y], [x + w - r, y], [x + w, y + r], [x + w, y + h - r], [x + w - r, y + h], [x + r, y + h], [x, y + h - r], [x, y + r] ]; return `M ${pts[0][0]} ${pts[0][1]} L ${pts[1][0]} ${pts[1][1]} C ${pts[1][0] + kappa} ${pts[1][1]} ${pts[2][0]} ${pts[2][1] - kappa} ${pts[2][0]} ${pts[2][1]} L ${pts[3][0]} ${pts[3][1]} C ${pts[3][0]} ${pts[3][1] + kappa} ${pts[4][0] + kappa} ${pts[4][1]} ${pts[4][0]} ${pts[4][1]} L ${pts[5][0]} ${pts[5][1]} C ${pts[5][0] - kappa} ${pts[5][1]} ${pts[6][0]} ${pts[6][1] + kappa} ${pts[6][0]} ${pts[6][1]} L ${pts[7][0]} ${pts[7][1]} C ${pts[7][0]} ${pts[7][1] - kappa} ${pts[0][0] - kappa} ${pts[0][1]} ${pts[0][0]} ${pts[0][1]} Z`; };
@@ -810,7 +872,7 @@
                         const tp = resizingEl.querySelector('textPath');
                         if (tp) { tp.setAttribute('textLength', w); tp.setAttribute('lengthAdjust', 'spacingAndGlyphs'); }
                     }
-                    if(h > 5) { resizingEl.setAttribute('font-size', h); window.setD(resizingEl, 'base-font-size', h); }
+                    if(h > 5) { window.setD(resizingEl, 'base-font-size', h); }
                     if(activeHandle.includes('l')) resizingEl.setAttribute('x', x);
                     if(activeHandle.includes('t')) resizingEl.setAttribute('y', y);
                     window.applyTextCurve(resizingEl);
@@ -893,6 +955,9 @@
         if (snapX !== null) { const lX = document.createElementNS("http://www.w3.org/2000/svg", "line"); lX.setAttribute("x1", snapX); lX.setAttribute("y1", 0); lX.setAttribute("x2", snapX); lX.setAttribute("y2", h); lX.classList.add("snap-line"); ctrl.appendChild(lX); }
         if (snapY !== null) { const lY = document.createElementNS("http://www.w3.org/2000/svg", "line"); lY.setAttribute("x1", 0); lY.setAttribute("y1", snapY); lY.setAttribute("x2", w); lY.setAttribute("y2", snapY); lY.classList.add("snap-line"); ctrl.appendChild(lY); }
 
+        if (el.tagName === 'text' && (parseFloat(window.getD(el, 'max-width')) || 0) > 0 && !isLocked) {
+            const mw = parseFloat(window.getD(el, 'max-width')); const cx = parseFloat(el.getAttribute("x")) || 0; const mwRect = document.createElementNS("http://www.w3.org/2000/svg", "rect"); mwRect.setAttribute("x", cx - mw/2); mwRect.setAttribute("y", b.y); mwRect.setAttribute("width", mw); mwRect.setAttribute("height", b.height); mwRect.setAttribute("fill", "rgba(16, 185, 129, 0.05)"); mwRect.setAttribute("stroke", "var(--accent)"); mwRect.setAttribute("stroke-dasharray", "4,4"); g.appendChild(mwRect);
+        }
         const strokeColor = isLocked ? "var(--error)" : "var(--handle-move)";
         const r = document.createElementNS("http://www.w3.org/2000/svg", "rect"); r.setAttribute("x", b.x); r.setAttribute("y", b.y); r.setAttribute("width", b.width); r.setAttribute("height", b.height); r.setAttribute("fill", "none"); r.setAttribute("stroke", strokeColor); r.setAttribute("stroke-width", "2"); r.setAttribute("stroke-dasharray", "6,4"); g.appendChild(r);
         
@@ -916,6 +981,33 @@
         else document.getElementById('editor-fields').innerHTML = `<div style="text-align:center; color:#64748b; margin-top:50px; font-style:italic; font-size:13px;">👆 Düzenlemek için sahneden veya katmanlardan bir nesne seçin.</div>`;
     };
 
+    window.renderLayers = function() {
+        const list = document.getElementById('layers-list'); list.innerHTML = "";
+        const elements = Array.from(document.querySelectorAll('.duzenlenebilir')).reverse();
+        document.getElementById('status-count').innerText = `Nesne Sayısı: ${elements.length}`;
+        
+        elements.forEach((el) => {
+            const isLocked = window.getD(el, 'locked') === "true"; const isActive = selectedEl === el;
+            let typeName = el.tagName.toUpperCase(); 
+            if (typeName === 'RECT') typeName = 'ŞEKİL'; if (typeName === 'G' || typeName === 'SVG') typeName = 'İKON'; 
+            if (typeName === 'PATH') typeName = 'ÇİZİM'; if (typeName === 'IMAGE') typeName = 'RESİM';
+            if (el.tagName === 'text') { let txt = window.getD(el, 'raw-text') || el.textContent; typeName = `T: ${txt.substring(0,10)}${txt.length>10?'...':''}`; }
+
+            const item = document.createElement('div'); item.className = `layer-item ${isActive ? 'active' : ''}`;
+            item.onclick = (e) => { 
+                if(e.target.closest('.layer-btn')) return; 
+                selectedEl = el; isDraggingElement = false; 
+                if(window.updateEditorUI) window.updateEditorUI(el); window.renderEditor(); 
+            };
+            item.innerHTML = `<span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; ${isLocked ? 'text-decoration:line-through; opacity:0.5;' : ''}">${typeName}</span><div class="layer-actions"><button class="layer-btn" onclick="window.moveLayer('${el.id}', 1)" title="Yukarı">▲</button><button class="layer-btn" onclick="window.moveLayer('${el.id}', -1)" title="Aşağı">▼</button><button class="layer-btn" onclick="window.toggleLock('${el.id}')" title="Kilit">${isLocked ? '🔒' : '🔓'}</button><button class="layer-btn" style="color:#ef4444;" onclick="if(confirm('Silinecek?')){ const delId='${el.id}'; if(selectedEl && selectedEl.id===delId) selectedEl=null; document.getElementById(delId).remove(); window.saveState(); window.renderEditor(); document.getElementById('control-layer').innerHTML=''; event.stopPropagation(); }">×</button></div>`;
+            list.appendChild(item);
+        });
+    };
+
+    window.createPropertySection = function(title, content) {
+        return `<details class="property-details" open><summary>${title}</summary><div>${content}</div></details>`;
+    };
+
     window.renderProperties = function() {
         const f = document.getElementById('editor-fields');
         if (!selectedEl || !selectedEl.tagName) { f.innerHTML = `<div style="text-align:center; color:#64748b; margin-top:50px; font-style:italic; font-size:13px;">👆 Düzenlemek için sahneden veya katmanlardan bir nesne seçin.</div>`; return; }
@@ -923,7 +1015,9 @@
         try {
             const el = selectedEl; const id = el.id; const tag = el.tagName.toLowerCase();
             const isLocked = window.getD(el, 'locked') === "true"; const isPath = tag === 'path'; const isText = tag === 'text'; const isShape = tag === 'rect'; const isImage = tag === 'image'; const isIcon = tag === 'svg' || tag === 'g';
+            
             let typeName = tag.toUpperCase(); if (isShape) typeName = 'ŞEKİL'; if (isIcon) typeName = 'İKON'; if (isPath) typeName = 'ÇİZİM'; if (isImage) typeName = 'RESİM'; if (isText) typeName = 'METİN';
+
             let sections = [];
 
             let headerHtml = `
@@ -938,7 +1032,10 @@
             `;
             sections.push(headerHtml);
 
-            if (isLocked) { sections.push(`<div style="text-align:center; color:#ef4444; font-size:12px; margin-top:20px;">🔒 Bu öğe kilitli. Düzenlemek için kilidini açın.</div>`); f.innerHTML = sections.join(''); return; }
+            if (isLocked) { 
+                sections.push(`<div style="text-align:center; color:#ef4444; font-size:12px; margin-top:20px;">🔒 Bu öğe kilitli. Düzenlemek için kilidini açın.</div>`); 
+                f.innerHTML = sections.join(''); return; 
+            }
 
             if(!isPath) {
                 let alignHtml = `<div class="action-row" style="margin-bottom:8px;"><button class="action-btn" onclick="window.alignElement('${id}', 'left')">⬅️ SOL</button><button class="action-btn" onclick="window.alignElement('${id}', 'center-h')">🎯 ORTA</button><button class="action-btn" onclick="window.alignElement('${id}', 'right')">SAĞ ➡️</button></div><div class="action-row" style="margin-bottom:10px;"><button class="action-btn" onclick="window.alignElement('${id}', 'center-v')">⬆️⬇️ DİKEY ORTA</button><button class="action-btn" onclick="window.toggleFlip('${id}', 'x')">↔️ YATAY ÇEVİR</button><button class="action-btn" onclick="window.toggleFlip('${id}', 'y')">↕️ DİKEY ÇEVİR</button></div>`;
@@ -954,6 +1051,7 @@
             if (!isPath) {
                 let bbox = {x:0, y:0, width:0, height:0}; try { bbox = el.getBBox(); } catch(e){}
                 const x = Math.round(parseFloat(el.getAttribute("x")) || bbox.x || 0); const y = Math.round(parseFloat(el.getAttribute("y")) || bbox.y || 0);
+                
                 let w = 0, h = 0;
                 
                 if(isText) { 
@@ -967,34 +1065,38 @@
                 let posHtml = `
                     <div class="label-row"><span class="label-text">X KONUMU</span><span class="value-badge" id="val-x-${id}">${x}px</span></div>
                     <div style="display:flex; gap:10px; margin-bottom:15px;">
-                        <input type="range" min="-1000" max="3000" id="input-x-${id}" value="${x}" style="flex:1;" oninput="window.changeProp('${id}', 'x', this.value); document.getElementById('val-x-${id}').innerText=this.value+'px'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                        <input type="number" value="${x}" style="width:70px; padding:8px;" oninput="window.changeProp('${id}', 'x', this.value); document.getElementById('val-x-${id}').innerText=this.value+'px'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                        <input type="range" min="-1000" max="3000" value="${x}" style="flex:1;" oninput="window.changeProp('${id}', 'x', this.value, this);" onchange="window.saveState()">
+                        <input type="number" value="${x}" style="width:70px; padding:8px;" oninput="window.changeProp('${id}', 'x', this.value, this);" onchange="window.saveState()">
                     </div>
                     <div class="label-row"><span class="label-text">Y KONUMU</span><span class="value-badge" id="val-y-${id}">${y}px</span></div>
                     <div style="display:flex; gap:10px; margin-bottom:15px;">
-                        <input type="range" min="-1000" max="3000" id="input-y-${id}" value="${y}" style="flex:1;" oninput="window.changeProp('${id}', 'y', this.value); document.getElementById('val-y-${id}').innerText=this.value+'px'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                        <input type="number" value="${y}" style="width:70px; padding:8px;" oninput="window.changeProp('${id}', 'y', this.value); document.getElementById('val-y-${id}').innerText=this.value+'px'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                        <input type="range" min="-1000" max="3000" value="${y}" style="flex:1;" oninput="window.changeProp('${id}', 'y', this.value, this);" onchange="window.saveState()">
+                        <input type="number" value="${y}" style="width:70px; padding:8px;" oninput="window.changeProp('${id}', 'y', this.value, this);" onchange="window.saveState()">
                     </div>
                     <div class="label-row"><span class="label-text">GENİŞLİK (W)</span><span class="value-badge" id="val-w-${id}">${w}px</span></div>
                     <div style="display:flex; gap:10px; margin-bottom:15px;">
-                        <input type="range" min="1" max="2500" value="${w}" id="w-slider-${id}" style="flex:1;" oninput="window.changeProp('${id}', 'w', this.value); document.getElementById('val-w-${id}').innerText=this.value+'px'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                        <input type="number" value="${w}" style="width:70px; padding:8px;" oninput="window.changeProp('${id}', 'w', this.value); document.getElementById('w-slider-${id}').value=this.value; document.getElementById('val-w-${id}').innerText=this.value+'px'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                        <input type="range" min="1" max="2500" value="${w}" style="flex:1;" oninput="window.changeProp('${id}', 'w', this.value, this);" onchange="window.saveState()">
+                        <input type="number" value="${w}" style="width:70px; padding:8px;" oninput="window.changeProp('${id}', 'w', this.value, this);" onchange="window.saveState()">
                     </div>
                     <div class="label-row"><span class="label-text">YÜKSEKLİK (H)</span><span class="value-badge" id="val-h-${id}">${h}px</span></div>
                     <div style="display:flex; gap:10px;">
-                        <input type="range" min="1" max="2500" value="${h}" id="h-slider-${id}" style="flex:1;" oninput="window.changeProp('${id}', 'h', this.value); document.getElementById('val-h-${id}').innerText=this.value+'px'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                        <input type="number" value="${h}" style="width:70px; padding:8px;" oninput="window.changeProp('${id}', 'h', this.value); document.getElementById('h-slider-${id}').value=this.value; document.getElementById('val-h-${id}').innerText=this.value+'px'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                        <input type="range" min="1" max="2500" value="${h}" style="flex:1;" oninput="window.changeProp('${id}', 'h', this.value, this);" onchange="window.saveState()">
+                        <input type="number" value="${h}" style="width:70px; padding:8px;" oninput="window.changeProp('${id}', 'h', this.value, this);" onchange="window.saveState()">
                     </div>`;
                 sections.push(window.createPropertySection("Konum ve Boyut", posHtml));
                 
                 const angle = parseFloat(window.getD(el, 'angle')) || 0;
                 let transHtml = `
-                    <div class="label-row" style="margin-top:0;"><span class="label-text">DÖNDÜRME AÇISI</span><span class="value-badge" id="badge-ang-${id}">${angle}°</span></div><div style="display:flex; gap:10px; align-items:center;"><input type="range" min="0" max="360" value="${angle}" style="flex:1;" oninput="window.changeSetting('${id}', 'angle', this.value); document.getElementById('badge-ang-${id}').innerText=this.value+'°'; this.nextElementSibling.value=this.value;" onchange="window.saveState()"><input type="number" value="${angle}" style="width:70px; padding:8px;" oninput="window.changeSetting('${id}', 'angle', this.value); document.getElementById('badge-ang-${id}').innerText=this.value+'°'; this.previousElementSibling.value=this.value;" onchange="window.saveState()"></div>`;
+                    <div class="label-row" style="margin-top:0;"><span class="label-text">DÖNDÜRME AÇISI</span><span class="value-badge" id="val-angle-${id}">${angle}°</span></div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="range" min="0" max="360" value="${angle}" style="flex:1;" oninput="window.changeSetting('${id}', 'angle', this.value, this);" onchange="window.saveState()">
+                        <input type="number" value="${angle}" style="width:70px; padding:8px;" oninput="window.changeSetting('${id}', 'angle', this.value, this);" onchange="window.saveState()">
+                    </div>`;
                 sections.push(window.createPropertySection("Dönüştürme (Transform)", transHtml));
             }
 
             if (isText) {
-                const ls = parseFloat(el.getAttribute("letter-spacing")) || 0; const currentFont = el.getAttribute("font-family") || "sans-serif"; const curve = parseFloat(window.getD(el, 'curve')) || 0;
+                const ls = parseFloat(el.getAttribute("letter-spacing")) || 0; const currentFont = el.getAttribute("font-family") || "sans-serif"; const curve = parseFloat(window.getD(el, 'curve')) || 0; const mw = parseFloat(window.getD(el, 'max-width')) || 0;
                 const isB = el.getAttribute('font-weight') === 'bold'; const isI = el.getAttribute('font-style') === 'italic'; const isU = el.getAttribute('text-decoration') === 'underline';
                 const tAlign = el.getAttribute('text-anchor') || 'middle';
                 let fontOptions = googleFonts.map(font => `<option value="${font.val}" style="font-family: ${font.val}" ${currentFont.includes(font.name) ? "selected" : ""}>${font.name}</option>`).join('');
@@ -1011,15 +1113,20 @@
                     </div>
                     <div class="action-row" style="margin-bottom:15px;"><button class="action-btn" onclick="window.applyTextStyle('${id}', 'normal')">Temizle</button><button class="action-btn" onclick="window.applyTextStyle('${id}', 'neon')">Neon</button><button class="action-btn" onclick="window.applyTextStyle('${id}', '3d')">3D</button><button class="action-btn" onclick="window.applyTextStyle('${id}', 'hollow')">Hollow</button></div>
                     
-                    <div class="label-row"><span class="label-text">EĞRİLİK (KAVİS)</span><span class="value-badge" id="val-cv-${id}">${curve}</span></div>
+                    <div class="label-row"><span class="label-text">EĞRİLİK (KAVİS)</span><span class="value-badge" id="val-curve-${id}">${curve}</span></div>
                     <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
-                        <input type="range" min="-100" max="100" value="${curve}" style="flex:1;" oninput="window.changeSetting('${id}', 'curve', this.value); document.getElementById('val-cv-${id}').innerText=this.value; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                        <input type="number" value="${curve}" style="width:70px; padding:8px;" oninput="window.changeSetting('${id}', 'curve', this.value); document.getElementById('val-cv-${id}').innerText=this.value; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                        <input type="range" min="-100" max="100" value="${curve}" style="flex:1;" oninput="window.changeSetting('${id}', 'curve', this.value, this);" onchange="window.saveState()">
+                        <input type="number" value="${curve}" style="width:70px; padding:8px;" oninput="window.changeSetting('${id}', 'curve', this.value, this);" onchange="window.saveState()">
                     </div>
-                    <div class="label-row"><span class="label-text">HARF ARALIĞI</span><span class="value-badge" id="val-ls-${id}">${ls}px</span></div>
+                    <div class="label-row"><span class="label-text">HARF ARALIĞI</span><span class="value-badge" id="val-letter-spacing-${id}">${ls}px</span></div>
+                    <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
+                        <input type="range" min="-20" max="100" value="${ls}" style="flex:1;" oninput="window.changeSetting('${id}', 'letter-spacing', this.value, this);" onchange="window.saveState()">
+                        <input type="number" value="${ls}" style="width:70px; padding:8px;" oninput="window.changeSetting('${id}', 'letter-spacing', this.value, this);" onchange="window.saveState()">
+                    </div>
+                    <div class="label-row"><span class="label-text">SIĞDIRMA (MAX-W)</span><span class="value-badge" id="val-max-width-${id}">${mw === 0 ? 'KAPALI' : mw+'px'}</span></div>
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <input type="range" min="-20" max="100" value="${ls}" style="flex:1;" oninput="window.changeSetting('${id}', 'letter-spacing', this.value); document.getElementById('val-ls-${id}').innerText=this.value+'px'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                        <input type="number" value="${ls}" style="width:70px; padding:8px;" oninput="window.changeSetting('${id}', 'letter-spacing', this.value); document.getElementById('val-ls-${id}').innerText=this.value+'px'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                        <input type="range" min="0" max="2000" value="${mw}" style="flex:1;" oninput="window.changeSetting('${id}', 'max-width', this.value, this);" onchange="window.saveState()">
+                        <input type="number" value="${mw}" style="width:70px; padding:8px;" oninput="window.changeSetting('${id}', 'max-width', this.value, this);" onchange="window.saveState()">
                     </div>`;
                 sections.push(window.createPropertySection("Yazı Tipi & Biçimlendirme", fontHtml));
             }
@@ -1028,10 +1135,10 @@
                 const rx = parseFloat(window.getD(el, 'rx')) || 0; const maskShape = window.getD(el, 'mask-shape') || 'none';
                 let bbox = {width:0, height:0}; try { bbox = el.getBBox(); }catch(e){} const maxR = Math.min(bbox.width, bbox.height) / 2;
                 let formHtml = `<div class="label-text" style="margin-bottom:5px;">MASKELEME ŞEKLİ</div><select class="font-select" style="margin-bottom:15px;" onchange="window.changeSetting('${id}', 'mask-shape', this.value); window.saveState();"><option value="none" ${maskShape === 'none' ? 'selected' : ''}>Yok (Düz)</option><option value="squircle" ${maskShape === 'squircle' ? 'selected' : ''}>Oval Kare (Squircle)</option><option value="circle" ${maskShape === 'circle' ? 'selected' : ''}>Daire</option><option value="triangle" ${maskShape === 'triangle' ? 'selected' : ''}>Üçgen</option><option value="star" ${maskShape === 'star' ? 'selected' : ''}>Yıldız</option></select>
-                <div class="label-row"><span class="label-text">KÖŞE YARIÇAPI (SQUIRCLE)</span><span class="value-badge" id="val-r-${id}">${Math.round(rx)}px</span></div>
+                <div class="label-row"><span class="label-text">KÖŞE YARIÇAPI (SQUIRCLE)</span><span class="value-badge" id="val-rx-${id}">${Math.round(rx)}px</span></div>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <input type="range" min="0" max="${maxR}" value="${rx}" style="flex:1;" oninput="window.changeSetting('${id}', 'rx', this.value); document.getElementById('val-r-${id}').innerText=Math.round(this.value)+'px'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                    <input type="number" value="${rx}" style="width:70px; padding:8px;" oninput="window.changeSetting('${id}', 'rx', this.value); document.getElementById('val-r-${id}').innerText=Math.round(this.value)+'px'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                    <input type="range" min="0" max="${maxR}" value="${rx}" style="flex:1;" oninput="window.changeSetting('${id}', 'rx', this.value, this);" onchange="window.saveState()">
+                    <input type="number" value="${rx}" style="width:70px; padding:8px;" oninput="window.changeSetting('${id}', 'rx', this.value, this);" onchange="window.saveState()">
                 </div>`;
                 sections.push(window.createPropertySection("Form & Maskeleme", formHtml));
             }
@@ -1041,7 +1148,7 @@
                 let swatchHtml = `<div class="label-text" style="margin-top:15px; margin-bottom:8px;">PROJE RENKLERİ</div><div class="swatch-container">` + recentColors.map(c => `<div class="color-swatch" style="background:${c}" onclick="window.applyRecentColor('${id}', '${c}')" title="${c}"></div>`).join('') + `</div>`;
                 let fillHtml = `<div class="label-text" style="margin-bottom:5px;">DOLGU TİPİ</div><select class="font-select" style="margin-bottom:15px;" onchange="window.changeSetting('${id}', 'fill-type', this.value); window.renderProperties(); window.saveState();"><option value="solid" ${fillType === 'solid' ? 'selected' : ''}>Düz Renk</option><option value="gradient" ${fillType === 'gradient' ? 'selected' : ''}>Renk Geçişi (Gradient)</option></select>`;
                 if (fillType === 'solid') { fillHtml += `<div class="label-text" style="margin-bottom:5px;">${isPath?'ÇİZGİ':'İÇ'} RENK</div><div style="display:flex; gap:10px; align-items:center;"><input type="color" value="${safeColor(solidCol)}" oninput="window.changeSetting('${id}', 'solid-color', this.value); this.nextElementSibling.nextElementSibling.value=this.value;" onchange="window.addRecentColor(this.value); window.saveState();" style="width:45px; height:45px; cursor:pointer; border:none; background:none; border-radius:8px;"><button class="action-btn" style="flex:0 0 45px; padding:12px; background:#334155; font-size:16px;" onclick="window.pickColor('${id}', 'solidColor', 'fill')" title="Göz Damlası">💧</button><input type="text" value="${safeColor(solidCol)}" style="flex:1;" oninput="window.changeSetting('${id}', 'solid-color', this.value); this.previousElementSibling.previousElementSibling.value=this.value;" onchange="window.addRecentColor(this.value); window.saveState();"></div>`; } 
-                else { fillHtml += `<div class="property-grid"><div class="input-group"><span class="label-text">RENK 1</span><div style="display:flex; gap:5px; align-items:center;"><input type="color" value="${safeColor(col1)}" oninput="window.changeSetting('${id}', 'color1', this.value);" onchange="window.addRecentColor(this.value); window.saveState();" style="width:35px; height:35px; cursor:pointer; border:none; background:none;"><button class="action-btn" style="padding:8px; background:#334155;" onclick="window.pickColor('${id}', 'color1', '')">💧</button></div></div><div class="input-group"><span class="label-text">RENK 2</span><div style="display:flex; gap:5px; align-items:center;"><input type="color" value="${safeColor(col2)}" oninput="window.changeSetting('${id}', 'color2', this.value);" onchange="window.addRecentColor(this.value); window.saveState();" style="width:35px; height:35px; cursor:pointer; border:none; background:none;"><button class="action-btn" style="padding:8px; background:#334155;" onclick="window.pickColor('${id}', 'color2', '')">💧</button></div></div></div>`; }
+                else { fillHtml += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><div class="input-group"><span class="label-text">RENK 1</span><div style="display:flex; gap:5px; align-items:center;"><input type="color" value="${safeColor(col1)}" oninput="window.changeSetting('${id}', 'color1', this.value);" onchange="window.addRecentColor(this.value); window.saveState();" style="width:35px; height:35px; cursor:pointer; border:none; background:none;"><button class="action-btn" style="padding:8px; background:#334155;" onclick="window.pickColor('${id}', 'color1', '')">💧</button></div></div><div class="input-group"><span class="label-text">RENK 2</span><div style="display:flex; gap:5px; align-items:center;"><input type="color" value="${safeColor(col2)}" oninput="window.changeSetting('${id}', 'color2', this.value);" onchange="window.addRecentColor(this.value); window.saveState();" style="width:35px; height:35px; cursor:pointer; border:none; background:none;"><button class="action-btn" style="padding:8px; background:#334155;" onclick="window.pickColor('${id}', 'color2', '')">💧</button></div></div></div>`; }
                 fillHtml += swatchHtml;
                 sections.push(window.createPropertySection("Dolgu & Renk", fillHtml));
             }
@@ -1050,8 +1157,8 @@
             let strokeHtml = `<div class="label-text" style="margin-bottom:5px;">ÇİZGİ RENGİ</div><div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;"><input type="color" value="${safeColor(strokeCol)}" oninput="const t=document.getElementById('${id}'); t.setAttribute('stroke', this.value); t.setAttribute('paint-order', 'stroke fill'); t.setAttribute('stroke-linejoin', 'round'); this.nextElementSibling.nextElementSibling.value=this.value;" onchange="window.addRecentColor(this.value); window.saveState();" style="width:45px; height:45px; cursor:pointer; border:none; background:none; border-radius:8px;"><button class="action-btn" style="flex:0 0 45px; padding:12px; background:#334155; font-size:16px;" onclick="window.pickColor('${id}', '', 'stroke')" title="Göz Damlası">💧</button><input type="text" value="${safeColor(strokeCol)}" style="flex:1;" oninput="const t=document.getElementById('${id}'); t.setAttribute('stroke', this.value); t.setAttribute('paint-order', 'stroke fill'); t.setAttribute('stroke-linejoin', 'round'); this.previousElementSibling.previousElementSibling.value=this.value;" onchange="window.addRecentColor(this.value); window.saveState();"></div>
             <div class="label-row"><span class="label-text">KALINLIK</span><span class="value-badge" id="val-sw-${id}">${strokeW}px</span></div>
             <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
-                <input type="range" min="0" max="50" value="${strokeW}" style="flex:1;" oninput="const t=document.getElementById('${id}'); t.setAttribute('stroke-width', this.value); t.setAttribute('paint-order', 'stroke fill'); this.nextElementSibling.value=this.value; document.getElementById('val-sw-${id}').innerText=this.value+'px';" onchange="window.saveState()">
-                <input type="number" value="${strokeW}" style="width:70px; padding:8px;" oninput="const t=document.getElementById('${id}'); t.setAttribute('stroke-width', this.value); t.setAttribute('paint-order', 'stroke fill'); this.previousElementSibling.value=this.value; document.getElementById('val-sw-${id}').innerText=this.value+'px';" onchange="window.saveState()">
+                <input type="range" min="0" max="50" value="${strokeW}" style="flex:1;" oninput="const t=document.getElementById('${id}'); t.setAttribute('stroke-width', this.value); t.setAttribute('paint-order', 'stroke fill'); document.getElementById('val-sw-${id}').innerText=this.value+'px'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
+                <input type="number" value="${strokeW}" style="width:70px; padding:8px;" oninput="const t=document.getElementById('${id}'); t.setAttribute('stroke-width', this.value); t.setAttribute('paint-order', 'stroke fill'); document.getElementById('val-sw-${id}').innerText=this.value+'px'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
             </div>
             <div class="label-text" style="margin-bottom:5px;">ÇİZGİ TİPİ</div>
             <select class="font-select" onchange="document.getElementById('${id}').setAttribute('stroke-dasharray', this.value); window.saveState();"><option value="none" ${dash === 'none' ? 'selected' : ''}>Düz</option><option value="5,5" ${dash === '5,5' ? 'selected' : ''}>Kesikli</option><option value="2,2" ${dash === '2,2' ? 'selected' : ''}>Noktalı</option></select>`;
@@ -1061,10 +1168,10 @@
             const sX = parseFloat(window.getD(el, 'shadow-x')) || 0, sY = parseFloat(window.getD(el, 'shadow-y')) || 0, sB = parseFloat(window.getD(el, 'shadow-blur')) || 0, sC = window.getD(el, 'shadow-color') || '#000000', bl = parseFloat(window.getD(el, 'blur')) || 0; const blend = window.getD(el, 'blend') || 'normal';
             
             let fxHtml = `
-            <div class="label-row"><span class="label-text">SAYDAMLIK (OPACITY)</span><span class="value-badge" id="val-op-${id}">${Math.round(opacityVal*100)}%</span></div>
+            <div class="label-row"><span class="label-text">SAYDAMLIK (OPACITY)</span><span class="value-badge" id="val-opacity-${id}">${Math.round(opacityVal*100)}%</span></div>
             <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
-                <input type="range" min="0" max="1" step="0.05" value="${opacityVal}" style="flex:1;" oninput="window.changeFilter('${id}', 'opacity', this.value); document.getElementById('val-op-${id}').innerText=Math.round(this.value*100)+'%'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                <input type="number" min="0" max="1" step="0.05" value="${opacityVal}" style="width:70px; padding:8px;" oninput="window.changeFilter('${id}', 'opacity', this.value); document.getElementById('val-op-${id}').innerText=Math.round(this.value*100)+'%'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                <input type="range" min="0" max="1" step="0.05" value="${opacityVal}" style="flex:1;" oninput="window.changeFilter('${id}', 'opacity', this.value, this);" onchange="window.saveState()">
+                <input type="number" min="0" max="1" step="0.05" value="${opacityVal}" style="width:70px; padding:8px;" oninput="window.changeFilter('${id}', 'opacity', this.value, this);" onchange="window.saveState()">
             </div>
             <div class="label-text" style="margin-bottom:5px;">KARIŞIM MODU (BLEND)</div>
             <select class="font-select" style="margin-bottom:15px;" onchange="window.changeFilter('${id}', 'blend', this.value); window.saveState();">
@@ -1077,25 +1184,25 @@
                     <button class="action-btn" style="padding:10px; background:#334155;" onclick="window.pickColor('${id}', 'shadow-color', '')">💧</button>
                     <input type="text" value="${sC}" style="flex:1;" oninput="window.changeFilter('${id}', 'shadow-color', this.value); this.previousElementSibling.previousElementSibling.value=this.value;" onchange="window.addRecentColor(this.value); window.saveState();">
                 </div>
-                <div class="label-row"><span class="label-text">GÖLGE X</span><span class="value-badge" id="val-sx-${id}">${sX}px</span></div>
+                <div class="label-row"><span class="label-text">GÖLGE X</span><span class="value-badge" id="val-shadow-x-${id}">${sX}px</span></div>
                 <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
-                    <input type="range" min="-100" max="100" value="${sX}" style="flex:1;" oninput="window.changeFilter('${id}', 'shadow-x', this.value); document.getElementById('val-sx-${id}').innerText=this.value+'px'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                    <input type="number" value="${sX}" style="width:70px; padding:8px;" oninput="window.changeFilter('${id}', 'shadow-x', this.value); document.getElementById('val-sx-${id}').innerText=this.value+'px'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                    <input type="range" min="-100" max="100" value="${sX}" style="flex:1;" oninput="window.changeFilter('${id}', 'shadow-x', this.value, this);" onchange="window.saveState()">
+                    <input type="number" value="${sX}" style="width:70px; padding:8px;" oninput="window.changeFilter('${id}', 'shadow-x', this.value, this);" onchange="window.saveState()">
                 </div>
-                <div class="label-row"><span class="label-text">GÖLGE Y</span><span class="value-badge" id="val-sy-${id}">${sY}px</span></div>
+                <div class="label-row"><span class="label-text">GÖLGE Y</span><span class="value-badge" id="val-shadow-y-${id}">${sY}px</span></div>
                 <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
-                    <input type="range" min="-100" max="100" value="${sY}" style="flex:1;" oninput="window.changeFilter('${id}', 'shadow-y', this.value); document.getElementById('val-sy-${id}').innerText=this.value+'px'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                    <input type="number" value="${sY}" style="width:70px; padding:8px;" oninput="window.changeFilter('${id}', 'shadow-y', this.value); document.getElementById('val-sy-${id}').innerText=this.value+'px'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                    <input type="range" min="-100" max="100" value="${sY}" style="flex:1;" oninput="window.changeFilter('${id}', 'shadow-y', this.value, this);" onchange="window.saveState()">
+                    <input type="number" value="${sY}" style="width:70px; padding:8px;" oninput="window.changeFilter('${id}', 'shadow-y', this.value, this);" onchange="window.saveState()">
                 </div>
-                <div class="label-row"><span class="label-text">GÖLGE YAYILMASI (BLUR)</span><span class="value-badge" id="val-sb-${id}">${sB}px</span></div>
+                <div class="label-row"><span class="label-text">GÖLGE YAYILMASI</span><span class="value-badge" id="val-shadow-blur-${id}">${sB}px</span></div>
                 <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
-                    <input type="range" min="0" max="100" value="${sB}" style="flex:1;" oninput="window.changeFilter('${id}', 'shadow-blur', this.value); document.getElementById('val-sb-${id}').innerText=this.value+'px'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                    <input type="number" value="${sB}" style="width:70px; padding:8px;" oninput="window.changeFilter('${id}', 'shadow-blur', this.value); document.getElementById('val-sb-${id}').innerText=this.value+'px'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                    <input type="range" min="0" max="100" value="${sB}" style="flex:1;" oninput="window.changeFilter('${id}', 'shadow-blur', this.value, this);" onchange="window.saveState()">
+                    <input type="number" value="${sB}" style="width:70px; padding:8px;" oninput="window.changeFilter('${id}', 'shadow-blur', this.value, this);" onchange="window.saveState()">
                 </div>
-                <div class="label-row"><span class="label-text">NESNE BULANIKLIĞI (BLUR)</span><span class="value-badge" id="val-bl-${id}">${bl}px</span></div>
+                <div class="label-row"><span class="label-text">NESNE BULANIKLIĞI</span><span class="value-badge" id="val-blur-${id}">${bl}px</span></div>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <input type="range" min="0" max="100" value="${bl}" style="flex:1;" oninput="window.changeFilter('${id}', 'blur', this.value); document.getElementById('val-bl-${id}').innerText=this.value+'px'; this.nextElementSibling.value=this.value;" onchange="window.saveState()">
-                    <input type="number" value="${bl}" style="width:70px; padding:8px;" oninput="window.changeFilter('${id}', 'blur', this.value); document.getElementById('val-bl-${id}').innerText=this.value+'px'; this.previousElementSibling.value=this.value;" onchange="window.saveState()">
+                    <input type="range" min="0" max="100" value="${bl}" style="flex:1;" oninput="window.changeFilter('${id}', 'blur', this.value, this);" onchange="window.saveState()">
+                    <input type="number" value="${bl}" style="width:70px; padding:8px;" oninput="window.changeFilter('${id}', 'blur', this.value, this);" onchange="window.saveState()">
                 </div>
             </div>`;
             sections.push(window.createPropertySection("Efektler & Görünüm", fxHtml));
@@ -1106,7 +1213,6 @@
             sections.push(window.createPropertySection("</> Canlı SVG Kodu", codeHtml));
 
             f.innerHTML = sections.join('');
-        
         } catch(err) {
             console.error("Özellik Paneli Hatası:", err);
             f.innerHTML = `<div style="color:#ef4444; padding:20px; font-size:12px; text-align:center;">Özellikler yüklenemedi. Lütfen nesneyi tekrar seçin.</div>`;
@@ -1128,16 +1234,11 @@
                 if(n.tagName==='parsererror') throw new Error('Hatalı Kod');
             }
             if(!n) throw new Error('Geçersiz SVG');
-            
-            let o = document.getElementById(id); 
-            o.replaceWith(n); 
-            selectedEl = n; 
+            let o = document.getElementById(id); o.replaceWith(n); selectedEl = n; 
             if(!selectedEl.id) selectedEl.id='el_'+Date.now(); 
             if(!selectedEl.classList.contains('duzenlenebilir')) selectedEl.classList.add('duzenlenebilir'); 
             window.saveState(); window.setupLayers(); window.updateEditorUI(selectedEl); window.renderEditor(); 
-        } catch(err) {
-            alert('Hata: Lütfen geçerli bir SVG kodu girin.');
-        }
+        } catch(err) { alert('Hata: Lütfen geçerli bir SVG kodu girin.'); }
     };
 </script>
 </body>
