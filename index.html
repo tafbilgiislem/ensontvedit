@@ -312,7 +312,7 @@
     };
 
     window.login = async function() {
-        if (WORKER_URL === "") { alert("Lütfen kodun içindeki WORKER_URL kısmına Worker linkinizi yazın!"); return; }
+        if (WORKER_URL === "https://githubtoken.tafbilgiislem.workers.dev") { alert("Lütfen kodun içindeki WORKER_URL kısmına Worker linkinizi yazın!"); return; }
         const passVal = document.getElementById('passInput').value;
         if(!passVal) { alert("Lütfen Worker şifrenizi girin!"); return; }
         SESSION_PASS = passVal; 
